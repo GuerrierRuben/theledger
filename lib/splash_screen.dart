@@ -42,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
         width: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue, Colors.purple],
+            colors: [Colors.white],
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
           ),
@@ -51,14 +51,14 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.network(
-              'https://th.bing.com/th/id/OIP.Zf220mYdTOd5T7p7VGsPbAEsCo?w=293&h=180&c=7&r=0&o=7&cb=defcache2&pid=1.7&rm=3&defcache=1',
+              'https://th.bing.com/th/id/OIP.f8mSU7QpVSYmqLvy9hJA2wAAAA?w=166&h=180&c=7&r=0&o=7&cb=defcache2&pid=1.7&rm=3&defcache=1',
             ),
             const SizedBox(height: 20),
             const Text(
               'Welcome to The Ledger',
               style: TextStyle(
                 fontSize: 24,
-                color: Colors.white,
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
