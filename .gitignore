@@ -1,3 +1,5 @@
+# Fichier de suivi des modifications IA (ne pas versionner)
+doc.txt
 # Miscellaneous
 *.class
 *.log
@@ -38,6 +40,9 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+
+# Fichier de suivi des modifications IA (ne pas versionner)
+doc.txt
 
 # Android Studio will place build artifacts here
 /android/app/debug

@@ -4,6 +4,8 @@ import 'package:the/main.dart';
 import 'package:the/favorites.dart'; 
 
 class MonApp extends StatelessWidget {
+  const MonApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
