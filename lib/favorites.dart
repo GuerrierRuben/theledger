@@ -1,27 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:the/details_page.dart'; 
+import 'package:the/details_page.dart';
 import 'package:the/category.dart';
 import 'package:the/main.dart';
-
-void main() {
-  runApp(const TestApp());
-}
-
-class TestApp extends StatelessWidget {
-  const TestApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.pink,
-      ),
-      home: const FavoritesPage(),
-    );
-  }
-}
+import 'package:the/service.dart';
+import 'package:the/models.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -31,35 +14,9 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  // Varyab pou kontwole onglet ki seleksyone a
   int currentPageIndex = 1;
 
-  List<Map<String, dynamic>> favoriteArticles = [
-    {
-      'id': '1',
-      'title': 'Donald Trump à la conquête de la Maison Blanche',
-      'category': 'Politique',
-      'imageUrl': 'https://picsum.photos/200/300',
-      'date': '15 Fév 2025',
-      'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-    },
-    {
-      'id': '2',
-      'title': 'Les mystères de l\'univers dévoilés',
-      'category': 'Science',
-      'imageUrl': 'https://picsum.photos/201/301',
-      'date': '14 Fév 2025',
-      'description': 'Sed do eiusmod tempor incididunt ut labore et dolore...',
-    },
-    {
-      'id': '3',
-      'title': 'Recette du jour : pasta carbonara',
-      'category': 'Cuisine',
-      'imageUrl': 'https://picsum.photos/202/302',
-      'date': '13 Fév 2025',
-      'description': 'Ut enim ad minim veniam, quis nostrud exercitation...',
-    },
-  ];
+  List<Article> get favoriteArticles => ArticleService().favorites;
 
   @override
   Widget build(BuildContext context) {
@@ -75,30 +32,21 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
           if (index == 0) {
             Navigator.push(
-              context, MaterialPageRoute(
-                builder: (context) => const MyHomePage(title: 'The Ledger')));
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage(title: 'The Ledger')),
+            );
           } else if (index == 2) {
             Navigator.push(
-              context, MaterialPageRoute(
-                builder: (context) => const CategoriesPage()));
+              context,
+              MaterialPageRoute(builder: (context) => const CategoriesPage()),
+            );
           }
         },
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined), 
-            selectedIcon: Icon(Icons.home),
-            label: 'Home'
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.favorite_border), 
-            selectedIcon: Icon(Icons.favorite),
-            label: 'Favorites'
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.menu), 
-            label: 'Categories'
-          ),
+          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.favorite_border), selectedIcon: Icon(Icons.favorite), label: 'Favorites'),
+          NavigationDestination(icon: Icon(Icons.menu), label: 'Categories'),
         ],
       ),
     );
@@ -106,9 +54,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      title: Text(
-        'Mes Favoris${favoriteArticles.isNotEmpty ? ' (${favoriteArticles.length})' : ''}',
-      ),
+      title: Text('Mes Favoris${favoriteArticles.isNotEmpty ? ' (${favoriteArticles.length})' : ''}'),
       centerTitle: true,
       actions: [
         if (favoriteArticles.isNotEmpty)
@@ -122,9 +68,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Widget _buildBody() {
-    if (favoriteArticles.isEmpty) {
-      return _buildEmptyState();
-    }
+    if (favoriteArticles.isEmpty) return _buildEmptyState();
     return _buildFavoritesList();
   }
 
@@ -138,46 +82,21 @@ class _FavoritesPageState extends State<FavoritesPage> {
             Container(
               width: 120,
               height: 120,
-              decoration: BoxDecoration(
-                color: Colors.pink.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.favorite_border,
-                size: 60,
-                color: Colors.pink,
-              ),
+              decoration: BoxDecoration(color: Colors.pink.withAlpha((0.1 * 255).round()), shape: BoxShape.circle),
+              child: const Icon(Icons.favorite_border, size: 60, color: Colors.pink),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Aucun favori pour le moment',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            const Text('Aucun favori pour le moment', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
             const SizedBox(height: 12),
-            Text(
-              'Les articles que vous aimerez apparaîtront ici.\nAppuyez sur le cœur pour les ajouter à vos favoris.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-                height: 1.5,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            Text('Les articles que vous aimerez apparaîtront ici.\nAppuyez sur le cœur pour les ajouter à vos favoris.', style: TextStyle(fontSize: 14, color: Colors.grey[600], height: 1.5), textAlign: TextAlign.center),
             const SizedBox(height: 32),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const MyHomePage(title: 'The Ledger')));
+              },
               icon: const Icon(Icons.explore),
               label: const Text('Découvrir des articles'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-              ),
+              style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
             ),
           ],
         ),
@@ -191,41 +110,29 @@ class _FavoritesPageState extends State<FavoritesPage> {
       itemCount: favoriteArticles.length,
       itemBuilder: (context, index) {
         final article = favoriteArticles[index];
-        return _buildFavoriteCard(article, index);
+        return _buildFavoriteCard(article);
       },
     );
   }
 
-  Widget _buildFavoriteCard(Map<String, dynamic> article, int index) {
+  Widget _buildFavoriteCard(Article article) {
     return Dismissible(
-      key: Key(article['id']),
+      key: Key(article.id.toString()),
       direction: DismissDirection.endToStart,
       background: _buildSwipeBackground(),
       confirmDismiss: (direction) async {
-        return await _showDeleteConfirmationDialog(article['title']);
+        return await _showDeleteConfirmationDialog(article.title);
       },
       onDismissed: (direction) {
-        _removeFavorite(index, article['title']);
+        _removeFavorite(article);
       },
       child: Card(
         margin: const EdgeInsets.only(bottom: 16),
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: InkWell(
           onTap: () {
-            // Navigation vers DetailsPage avec les données de l'article
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetailsPage(
-                  title: article['title'],
-                  imageUrl: article['imageUrl'],
-                  content: "Contenu complet de l'article : ${article['description']}",
-                ),
-              ),
-            );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsPage(article: article)));
           },
           borderRadius: BorderRadius.circular(12),
           child: Padding(
@@ -235,17 +142,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    article['imageUrl'],
+                  child: CachedNetworkImage(
+                    imageUrl: article.imageUrl,
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 80,
-                      height: 80,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.broken_image),
-                    ),
+                    placeholder: (ctx, url) => Container(width: 80, height: 80, color: Colors.grey[200]),
+                    errorWidget: (ctx, url, err) => Container(width: 80, height: 80, color: Colors.grey[300], child: const Icon(Icons.broken_image)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -253,63 +156,32 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        article['title'],
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      Text(article.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 6),
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              article['category'],
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(color: Colors.blue.withAlpha((0.1 * 255).round()), borderRadius: BorderRadius.circular(12)),
+                            child: Text(article.newsSite, style: const TextStyle(fontSize: 11, color: Colors.blue, fontWeight: FontWeight.bold)),
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            article['date'],
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey[600],
-                            ),
-                          ),
+                          const Spacer(),
                         ],
                       ),
                       const SizedBox(height: 6),
-                      Text(
-                        article['description'],
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[700],
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      Text(article.summary, style: TextStyle(fontSize: 13, color: Colors.grey[700]), maxLines: 2, overflow: TextOverflow.ellipsis),
                     ],
                   ),
                 ),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                  color: Colors.grey,
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      ArticleService().toggleFavorite(article);
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${article.title} ${ArticleService().isFavorite(article) ? 'ajouté aux favoris' : 'retiré des favoris'}')));
+                  },
+                  icon: Icon(ArticleService().isFavorite(article) ? Icons.favorite : Icons.favorite_border, color: Colors.pink),
                 ),
               ],
             ),
@@ -324,38 +196,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
       alignment: Alignment.centerRight,
       padding: const EdgeInsets.only(right: 20),
       margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Icon(Icons.delete, color: Colors.white),
-          SizedBox(width: 8),
-          Text(
-            'Supprimer',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
+      decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(12)),
+      child: const Row(mainAxisAlignment: MainAxisAlignment.end, children: [Icon(Icons.delete, color: Colors.white), SizedBox(width: 8), Text('Supprimer', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))]),
     );
   }
 
-  void _removeFavorite(int index, String title) {
+  void _removeFavorite(Article article) {
     setState(() {
-      favoriteArticles.removeAt(index);
+      ArticleService().removeFavorite(article);
     });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$title retiré des favoris'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${article.title} retiré des favoris'), duration: const Duration(seconds: 2)));
   }
 
   Future<bool?> _showDeleteConfirmationDialog(String title) {
@@ -365,15 +215,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
         title: const Text('Retirer des favoris ?'),
         content: Text('Voulez-vous retirer "$title" de vos favoris ?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Retirer'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(context, true), style: TextButton.styleFrom(foregroundColor: Colors.red), child: const Text('Retirer')),
         ],
       ),
     );
@@ -384,24 +227,18 @@ class _FavoritesPageState extends State<FavoritesPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Vider les favoris ?'),
-        content: Text(
-          'Cette action supprimera tous vos articles favoris (${favoriteArticles.length} articles).',
-        ),
+        content: Text('Cette action supprimera tous vos articles favoris (${favoriteArticles.length} articles).'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                favoriteArticles.clear();
-              });
-              Navigator.pop(context);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Tout supprimer'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annuler')),
+          TextButton(onPressed: () {
+            setState(() {
+              final copy = List<Article>.from(favoriteArticles);
+              for (final a in copy) {
+                ArticleService().removeFavorite(a);
+              }
+            });
+            Navigator.pop(context);
+          }, style: TextButton.styleFrom(foregroundColor: Colors.red), child: const Text('Tout supprimer')),
         ],
       ),
     );
