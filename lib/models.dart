@@ -1,25 +1,47 @@
 class Article {
-  int id;
-  String title;
-  String summary;
-  String imageUrl;
-  String newsSite;
-  String url;
+  final int id;
+  final String title;
+  final String summary;
+  final String imageUrl;
+  final String newsSite;
+  final String url;
 
-  Article (
-    this.id,
-    this.title,
-    this.summary,
-    this.imageUrl,
-    this.newsSite,
-    this.url
-  );
+  const Article({
+    required this.id,
+    required this.title,
+    required this.summary,
+    required this.imageUrl,
+    required this.newsSite,
+    required this.url,
+  });
 
-  Article.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        title = json['title'],
-        summary = json['summary'],
-        imageUrl = json['image_url'],
-        newsSite = json['news_site'],
-        url = json['url'];
+  factory Article.fromJson(Map<String, dynamic> json) {
+    return Article(
+      id: json['id'] is int
+          ? json['id']
+          : int.tryParse(json['id'].toString()) ?? 0,
+
+      title: json['title']?.toString() ?? '',
+      summary: json['summary']?.toString() ?? '',
+      imageUrl: json['image_url']?.toString() ?? '',
+      newsSite: json['news_site']?.toString() ?? '',
+      url: json['url']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'summary': summary,
+      'image_url': imageUrl,
+      'news_site': newsSite,
+      'url': url,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Article(id: $id, title: $title)';
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the/details_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:the/main.dart';
 import 'package:the/favorites.dart';
 import 'package:the/service.dart';
@@ -73,7 +74,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
+                      color: Colors.blue.withAlpha((0.1 * 255).round()),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
@@ -162,59 +163,35 @@ class ArticlesPage extends StatelessWidget {
             final article = articles[i];
             return InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetailsPage(
-                      title: article.title,
-                      imageUrl: article.imageUrl,
-                      content: article.summary,
-                    ),
-                  ),
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsPage(article: article)));
               },
               child: Card(
                 clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       flex: 3,
-                      child: Image.network(
-                        article.imageUrl,
+                      child: CachedNetworkImage(
+                        imageUrl: article.imageUrl,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (ctx, error, stack) => Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.image_not_supported),
+                        progressIndicatorBuilder: (ctx, url, downloadProgress) => Center(
+                          child: CircularProgressIndicator(value: downloadProgress.progress, color: Colors.blueGrey),
                         ),
+                        errorWidget: (ctx, url, err) => Container(color: Colors.grey[300], child: const Icon(Icons.image_not_supported)),
                       ),
                     ),
                     Expanded(
                       flex: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              article.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              article.summary,
-                              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(article.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+                          const SizedBox(height: 4),
+                          Text(article.summary, style: TextStyle(fontSize: 11, color: Colors.grey[600]), maxLines: 2, overflow: TextOverflow.ellipsis),
+                        ]),
                       ),
                     ),
                   ],
