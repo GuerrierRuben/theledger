@@ -47,3 +47,7 @@ JEAN Falandy	   Logic/API              Jesyon done , koneksyon API
 
 5. Rezime teknik
 Aplikasyon an devlope ak Flutter (Dart) epi li itilize Material Design 3. Li bati sou yon achitekti modilè kote chak paj (HomePage, CategoriePage, DetailsPage, FavoritesPage) separe pou rann antretyen an pi fasil.
+
+
+lien drive apk,video, dossier appendix
+https://drive.google.com/drive/folders/1_-ykLBximdXk6_85ycbYWiIwvXq7Mv9S
